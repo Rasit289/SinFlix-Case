@@ -46,4 +46,30 @@ class AppStrings {
   static const String profileTab = 'Profil';
   static const String logoutMessage = 'Çıkış yapılıyor...';
   static const String profilePage = 'Profil Sayfası';
+
+  // Profile & Photo Upload
+  static const String profileDetail = 'Profil Detayı';
+  static const String photoUploadTitle = 'Fotoğraflarınızı Yükleyin';
+  static const String photoUploadDesc =
+      'Resources out incentivize relaxation floor loss cc.';
+  static const String photoSelectTitle = 'Fotoğraf Seç';
+  static const String camera = 'Kamera';
+  static const String gallery = 'Galeri';
+  static const String continueButton = 'Devam Et';
+
+  static const String limitedOffer = 'Sınırlı Teklif';
+  static const String addPhoto = 'Fotoğraf Ekle';
+  static const String limitedOfferDescription =
+      "Jeton paketin'ni seçerek bonus kazanın ve yeni bölümlerin kilidini açın!";
+  static const String bonusEarned = 'Alacağınız Bonuslar';
+  static const String premiumAccount = 'Premium\nHesap';
+  static const String moreMatches = 'Daha\nFazla Eşleşme';
+  static const String promote = 'Öne\nÇıkarma';
+  static const String moreLikes = 'Daha\nFazla Beğeni';
+  static const String unlockNewEpisodes =
+      'Kilidi açmak için bir jeton paketi seçin';
+  static const String bonus10 = '+10%';
+  static const String bonus35 = '+35%';
+  static const String bonus70 = '+70%';
+  static const String viewAllTokens = 'Tüm Jetonları Gör';
 }

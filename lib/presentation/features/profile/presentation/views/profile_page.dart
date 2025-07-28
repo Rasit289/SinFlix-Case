@@ -7,15 +7,22 @@ import '../bloc/profile_event.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/utils/image_utils.dart';
+import '../../../../../core/mixins/logger_mixin.dart';
 import 'package:dio/dio.dart';
 import '../../../../../data/datasources/profile_remote_datasource.dart';
 import '../../../../../core/services/token_storage_service.dart';
+import '../../../../../../app.dart' show LocaleProvider;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class ProfilePage extends StatelessWidget with LoggerMixin {
+  ProfilePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    logInfo('ProfilePage: build başladı');
+    logUserAction('profile_page_opened');
+
     return BlocProvider(
       create: (_) => ProfileBloc(
         remoteDataSource: ProfileRemoteDataSourceImpl(
@@ -25,6 +32,147 @@ class ProfilePage extends StatelessWidget {
       )..add(LoadProfile()),
       child: Scaffold(
         backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: GestureDetector(
+              onTap: () {
+                logUserAction('back_button_pressed',
+                    {'from': 'profile_page', 'to': 'home_page'});
+                logNavigation('profile_page', 'home_page');
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.grey[600]!,
+                    width: 1,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
+          centerTitle: true,
+          title: Text(
+            AppLocalizations.of(context)!.profileDetail,
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: AppSizes.fontSizeM,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          actions: [
+            // Limited Offer butonu
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              child: GestureDetector(
+                onTap: () {
+                  logUserAction('limited_offer_button_pressed');
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => const LimitedOfferBottomSheet(),
+                  );
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.errorButton,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.diamond,
+                          color: AppColors.textPrimary, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        AppLocalizations.of(context)!.limitedOffer,
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.fontSizeS,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Dil seçici
+            IconButton(
+              icon: const Icon(Icons.language, color: Colors.white),
+              tooltip: 'Dil / Language',
+              onPressed: () async {
+                logUserAction('language_selector_pressed');
+                final provider = context.read<LocaleProvider>();
+                final currentLocale = provider.locale.languageCode;
+                final selected = await showModalBottomSheet<Locale>(
+                  context: context,
+                  backgroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[700],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Dil Seç / Select Language',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildLangButton(
+                                context, 'tr', 'Türkçe', currentLocale == 'tr'),
+                            _buildLangButton(context, 'en', 'English',
+                                currentLocale == 'en'),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    ),
+                  ),
+                );
+                if (selected != null) {
+                  logUserAction('language_changed',
+                      {'from': currentLocale, 'to': selected.languageCode});
+                  provider.setLocale(selected);
+                }
+              },
+            ),
+          ],
+        ),
         body: SafeArea(
           child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
@@ -37,102 +185,9 @@ class ProfilePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // AppBar Row
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[800],
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.grey[600]!,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  onPressed: () {
-                                    // Ana sayfaya dön (MainNavigationPage'in ilk sayfası)
-                                    Navigator.of(context)
-                                        .popUntil((route) => route.isFirst);
-                                  },
-                                  padding: EdgeInsets.zero,
-                                ),
-                              ),
-                              SizedBox(
-                                  width:
-                                      12), // Profil Detayı ile Sınırlı Teklif arası boşluk
-                              Container(width: 48), // Placeholder for symmetry
-                              SizedBox(width: 12),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: AppColors.errorButton,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (context) =>
-                                          const LimitedOfferBottomSheet(),
-                                    );
-                                  },
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.diamond,
-                                        color: AppColors.textPrimary,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'Sınırlı Teklif',
-                                        style: TextStyle(
-                                          color: AppColors.textPrimary,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: AppSizes.fontSizeS,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 80),
-                              child: Text(
-                                'Profil Detayı',
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: AppSizes.fontSizeM,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(
                           height:
-                              48), // Sınırlı Teklif ile Profil Detayı arası boşluk
+                              10), // Sınırlı Teklif ile Profil Detayı arası boşluk
                       // Profile Info Row
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -198,25 +253,32 @@ class ProfilePage extends StatelessWidget {
                                     ),
                                   ),
                                   onPressed: () async {
+                                    logUserAction(
+                                        'photo_upload_button_pressed');
+                                    logNavigation(
+                                        'profile_page', 'photo_upload_page');
+
                                     final result =
                                         await Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const PhotoUploadPage(),
+                                        builder: (context) => PhotoUploadPage(),
                                       ),
                                     );
 
                                     // Eğer yeni fotoğraf URL'si döndüyse profil sayfasını güncelle
                                     if (result != null && result is String) {
-                                      print(
+                                      logInfo(
                                           'ProfilePage: Yeni fotograf URL alindi: $result');
+                                      logUserAction('profile_photo_updated',
+                                          {'photoUrl': result});
                                       // ProfileBloc'a yeni fotoğraf URL'sini gönder
                                       context
                                           .read<ProfileBloc>()
                                           .add(UpdateProfilePhoto(result));
                                     }
                                   },
-                                  child: Text('Fotoğraf Ekle',
+                                  child: Text(
+                                      AppLocalizations.of(context)!.addPhoto,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: AppSizes.fontSizeS)),
@@ -226,9 +288,9 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
                       Text(
-                        'Beğendiğim Filmler',
+                        AppLocalizations.of(context)!.profileTab,
                         style: TextStyle(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
@@ -265,7 +327,8 @@ class ProfilePage extends StatelessWidget {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(28),
                                         child: Image.network(
-                                          movie.imageUrl,
+                                          ImageUtils.fixImageUrl(
+                                              movie.imageUrl),
                                           width: double.infinity,
                                           height: 210, // Daha büyük resim
                                           fit: BoxFit.cover,
@@ -343,7 +406,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Sınırlı Teklif',
+              AppLocalizations.of(context)!.limitedOffer,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -352,7 +415,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Jeton paketin\'ni seçerek bonus kazanın ve yeni bölümlerin kilidini açın!',
+              AppLocalizations.of(context)!.limitedOfferDescription,
               style: TextStyle(
                 color: Colors.white.withOpacity(0.85),
                 fontSize: 15,
@@ -369,7 +432,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Alacağınız Bonuslar',
+                    AppLocalizations.of(context)!.bonusEarned,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -382,19 +445,19 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                     children: [
                       _BonusIconText(
                           icon: Icons.diamond,
-                          label: 'Premium\nHesap',
+                          label: AppLocalizations.of(context)!.premiumAccount,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
-                          label: 'Daha\nFazla Eşleşme',
+                          label: AppLocalizations.of(context)!.moreMatches,
                           doubleHeart: true,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
                           icon: Icons.arrow_upward,
-                          label: 'Öne\nÇıkarma',
+                          label: AppLocalizations.of(context)!.promote,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
                           icon: Icons.favorite,
-                          label: 'Daha\nFazla Beğeni',
+                          label: AppLocalizations.of(context)!.moreLikes,
                           bgColor: Color(0xFFD32F2F)),
                     ],
                   ),
@@ -403,7 +466,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Kilidi açmak için bir jeton paketi seçin',
+              AppLocalizations.of(context)!.unlockNewEpisodes,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -416,7 +479,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
               children: [
                 _JetonCard(
                   color: const Color(0xFFD32F2F),
-                  badge: '+10%',
+                  badge: AppLocalizations.of(context)!.bonus10,
                   old: '200',
                   current: '330',
                   price: '₺99,99',
@@ -424,7 +487,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                 ),
                 _JetonCard(
                   color: const Color(0xFF7B1FA2),
-                  badge: '+70%',
+                  badge: AppLocalizations.of(context)!.bonus70,
                   old: '2.000',
                   current: '3.375',
                   price: '₺799,99',
@@ -433,7 +496,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                 ),
                 _JetonCard(
                   color: const Color(0xFFD32F2F),
-                  badge: '+35%',
+                  badge: AppLocalizations.of(context)!.bonus35,
                   old: '1.000',
                   current: '1.350',
                   price: '₺399,99',
@@ -454,8 +517,8 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {},
-                child: const Text(
-                  'Tüm Jetonları Gör',
+                child: Text(
+                  AppLocalizations.of(context)!.viewAllTokens,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -693,4 +756,43 @@ class _JetonBadge extends StatelessWidget {
       );
     }
   }
+}
+
+Widget _buildLangButton(
+    BuildContext context, String code, String label, bool selected) {
+  return Expanded(
+    child: GestureDetector(
+      onTap: () => Navigator.pop(context, Locale(code)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        decoration: BoxDecoration(
+          color: selected ? Colors.red : Colors.grey[900],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? Colors.red : Colors.grey[700]!,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: selected ? Colors.white : Colors.grey[200],
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+            if (selected)
+              const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(Icons.check, color: Colors.white, size: 18),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

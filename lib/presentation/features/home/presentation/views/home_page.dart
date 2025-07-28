@@ -7,6 +7,9 @@ import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../domain/entities/movie_entity.dart';
+import '../../../../../core/utils/image_utils.dart';
+import '../../../../../core/mixins/logger_mixin.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,15 +18,18 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with LoggerMixin {
   final PageController _pageController = PageController();
   int _currentPage = 1;
   int _currentMovieIndex = 0;
   Map<String, bool> _expandedTexts = {}; // Track which texts are expanded
+  Map<String, bool> _localFavorites = {}; // Anlık favori güncelleme için
 
   @override
   void initState() {
     super.initState();
+    logInfo('HomePage: initState başladı');
+    logUserAction('home_page_opened');
     // Load initial movies
     context.read<HomeBloc>().add(const LoadMovies(page: 1));
   }
@@ -39,6 +45,9 @@ class _HomePageState extends State<HomePage> {
       _currentMovieIndex = index;
     });
 
+    logUserAction(
+        'page_changed', {'index': index, 'currentPage': _currentPage});
+
     // Load more movies when user reaches near the end
     final state = context.read<HomeBloc>().state;
     if (state is HomeLoaded) {
@@ -48,6 +57,7 @@ class _HomePageState extends State<HomePage> {
       // If user is at 80% of loaded movies, load next page
       if (index >= totalMovies * 0.8 && !state.hasReachedMax) {
         _currentPage++;
+        logInfo('HomePage: Yeni sayfa yükleniyor - Page: $_currentPage');
         context.read<HomeBloc>().add(LoadMovies(page: _currentPage));
       }
     }
@@ -57,6 +67,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _expandedTexts[movieId] = !(_expandedTexts[movieId] ?? false);
     });
+    logUserAction('text_expansion_toggled',
+        {'movieId': movieId, 'isExpanded': _expandedTexts[movieId]});
   }
 
   @override
@@ -70,14 +82,6 @@ class _HomePageState extends State<HomePage> {
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: AppColors.errorButton,
-              ),
-            );
-          }
-          if (state is FavoriteToggled) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${state.movie.title} favorilere eklendi'),
-                backgroundColor: AppColors.success,
               ),
             );
           }
@@ -95,30 +99,41 @@ class _HomePageState extends State<HomePage> {
             if (state is HomeLoaded) {
               return RefreshIndicator(
                 onRefresh: () async {
+                  logInfo('HomePage: Pull-to-refresh başladı');
+                  logUserAction('pull_to_refresh');
                   _currentPage = 1;
                   _currentMovieIndex = 0;
+                  _pageController.jumpToPage(0);
                   context.read<HomeBloc>().add(RefreshMovies());
+                  // Refresh işleminin tamamlanmasını bekle
+                  await Future.delayed(const Duration(milliseconds: 500));
                 },
                 color: AppColors.loadingIndicator,
                 backgroundColor: AppColors.loadingIndicatorBackground,
-                child: PageView.builder(
-                  controller: _pageController,
-                  scrollDirection: Axis.vertical,
-                  onPageChanged: _onPageChanged,
-                  itemCount:
-                      state.movies.length + (state.hasReachedMax ? 0 : 1),
-                  itemBuilder: (context, index) {
-                    if (index >= state.movies.length) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.loadingIndicator,
-                        ),
-                      );
-                    }
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      scrollDirection: Axis.vertical,
+                      onPageChanged: _onPageChanged,
+                      itemCount:
+                          state.movies.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        if (index >= state.movies.length) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.loadingIndicator,
+                            ),
+                          );
+                        }
 
-                    final movie = state.movies[index];
-                    return _buildMovieCard(movie);
-                  },
+                        final movie = state.movies[index];
+                        return _buildMovieCard(movie);
+                      },
+                    ),
+                  ),
                 ),
               );
             }
@@ -135,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: AppSizes.paddingL),
                     Text(
-                      AppStrings.homeErrorTitle,
+                      AppLocalizations.of(context)!.homeErrorTitle,
                       style: TextStyle(
                         color: AppColors.errorText,
                         fontSize: AppSizes.fontSizeL,
@@ -162,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: AppColors.errorButton,
                         foregroundColor: AppColors.errorButtonText,
                       ),
-                      child: Text(AppStrings.homeErrorRetry),
+                      child: Text(AppLocalizations.of(context)!.homeErrorRetry),
                     ),
                   ],
                 ),
@@ -182,6 +197,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMovieCard(MovieEntity movie) {
+    final isFavorite = _localFavorites[movie.id] ?? movie.isFavorite;
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       child: Stack(
@@ -193,7 +209,7 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSizes.radiusL),
               image: DecorationImage(
-                image: NetworkImage(movie.imageUrl),
+                image: NetworkImage(ImageUtils.fixImageUrl(movie.imageUrl)),
                 fit: BoxFit.cover,
               ),
             ),
@@ -226,6 +242,26 @@ class _HomePageState extends State<HomePage> {
             bottom: 245, // TODO: AppSizes ile merkezi yönetim
             child: GestureDetector(
               onTap: () {
+                logUserAction('favorite_toggled', {
+                  'movieId': movie.id,
+                  'movieTitle': movie.title,
+                  'previousState': isFavorite,
+                  'newState': !isFavorite,
+                });
+
+                setState(() {
+                  _localFavorites[movie.id] = !isFavorite;
+                });
+                // Önce snackbar göster
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(isFavorite
+                        ? '${movie.title} favorilerden kaldırıldı'
+                        : '${movie.title} favorilere eklendi'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+                // Sonra favori durumunu değiştir
                 context.read<HomeBloc>().add(ToggleFavorite(movie.id));
               },
               child: Container(
@@ -240,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 child: Icon(
-                  movie.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: AppColors.favoriteIcon,
                   size: AppSizes.fontSizeXL,
                 ),
@@ -302,8 +338,8 @@ class _HomePageState extends State<HomePage> {
                         if (movie.description.length > 80)
                           TextSpan(
                             text: _expandedTexts[movie.id] == true
-                                ? ' ${AppStrings.homeLess}'
-                                : AppStrings.homeMore,
+                                ? ' ${AppLocalizations.of(context)!.homeLess}'
+                                : AppLocalizations.of(context)!.homeMore,
                             style: TextStyle(
                               color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,

@@ -7,15 +7,18 @@ import '../bloc/photo_upload_event.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/mixins/logger_mixin.dart';
 import '../../../../../domain/usecases/upload_photo_usecase.dart';
 import '../../../../../data/repositories/photo_upload_repository_impl.dart';
 import '../../../../../data/datasources/photo_upload_remote_datasource.dart';
 import '../../../../../core/services/token_storage_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class PhotoUploadPage extends StatelessWidget {
-  const PhotoUploadPage({Key? key}) : super(key: key);
+class PhotoUploadPage extends StatelessWidget with LoggerMixin {
+  PhotoUploadPage({Key? key}) : super(key: key);
 
   void _showPhotoOptions(BuildContext context) {
+    logUserAction('photo_options_modal_opened');
     final photoUploadBloc = context.read<PhotoUploadBloc>();
 
     showModalBottomSheet(
@@ -41,9 +44,9 @@ class PhotoUploadPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Title
-            const Text(
-              'Fotoğraf Seç',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.photoSelectTitle,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -57,6 +60,7 @@ class PhotoUploadPage extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
+                      logUserAction('camera_option_selected');
                       Navigator.pop(context);
                       photoUploadBloc.add(TakePhoto());
                     },
@@ -75,9 +79,9 @@ class PhotoUploadPage extends StatelessWidget {
                             size: 32,
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Kamera',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.camera,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -92,6 +96,7 @@ class PhotoUploadPage extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
+                      logUserAction('gallery_option_selected');
                       Navigator.pop(context);
                       photoUploadBloc.add(SelectPhoto());
                     },
@@ -110,9 +115,9 @@ class PhotoUploadPage extends StatelessWidget {
                             size: 32,
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Galeri',
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.gallery,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -134,6 +139,9 @@ class PhotoUploadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    logInfo('PhotoUploadPage: build başladı');
+    logUserAction('photo_upload_page_opened');
+
     return BlocProvider(
       create: (_) => PhotoUploadBloc(
         uploadPhotoUseCase: UploadPhotoUseCase(
@@ -193,7 +201,7 @@ class PhotoUploadPage extends StatelessWidget {
                         ),
                         Center(
                           child: Text(
-                            'Profil Detayı',
+                            AppLocalizations.of(context)!.profileDetail,
                             style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: AppSizes.fontSizeL,
@@ -212,7 +220,7 @@ class PhotoUploadPage extends StatelessWidget {
                         children: [
                           // Title
                           Text(
-                            'Fotoğraflarınızı Yükleyin',
+                            AppLocalizations.of(context)!.photoUploadTitle,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
@@ -223,7 +231,7 @@ class PhotoUploadPage extends StatelessWidget {
 
                           // Description
                           Text(
-                            'Resources out incentivize relaxation floor loss cc.',
+                            AppLocalizations.of(context)!.photoUploadDesc,
                             style: TextStyle(
                               color: Colors.grey[400],
                               fontSize: 16,
@@ -339,7 +347,7 @@ class PhotoUploadPage extends StatelessWidget {
                               }
                             : null,
                         child: Text(
-                          'Devam Et',
+                          AppLocalizations.of(context)!.continueButton,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: AppSizes.fontSizeL,

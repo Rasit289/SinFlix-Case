@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'core/services/firebase_service.dart';
 import 'presentation/shared/theme/app_theme.dart';
 import 'routes/app_router.dart';
 import 'presentation/features/login/views/login_page.dart';
@@ -26,11 +30,24 @@ import 'data/datasources/movie_remote_datasource.dart';
 import 'core/services/token_storage_service.dart';
 import 'core/services/auth_interceptor.dart';
 
+class LocaleProvider extends ChangeNotifier {
+  Locale _locale = const Locale('tr');
+  Locale get locale => _locale;
+
+  void setLocale(Locale locale) {
+    if (!['en', 'tr'].contains(locale.languageCode)) return;
+    _locale = locale;
+    notifyListeners();
+  }
+}
+
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize Firebase
+    FirebaseService.initialize();
     // Initialize services
     final tokenStorage = TokenStorageServiceImpl();
     final dio = Dio();
@@ -89,33 +106,52 @@ class App extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        title: 'Sinflix',
-        theme: AppTheme.darkTheme,
-        debugShowCheckedModeBanner: false,
-        onGenerateRoute: AppRouter.generateRoute,
-        home: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            print('App: Current AuthBloc state: ${state.runtimeType}');
+      child: ChangeNotifierProvider(
+        create: (_) => LocaleProvider(),
+        child: Consumer<LocaleProvider>(
+          builder: (context, localeProvider, child) {
+            return MaterialApp(
+              title: 'Sinflix',
+              theme: AppTheme.darkTheme,
+              debugShowCheckedModeBanner: false,
+              onGenerateRoute: AppRouter.generateRoute,
+              locale: localeProvider.locale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('tr'),
+              ],
+              home: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  print('App: Current AuthBloc state: ${state.runtimeType}');
 
-            if (state is AuthLoading) {
-              print('App: Showing loading screen');
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
+                  if (state is AuthLoading) {
+                    print('App: Showing loading screen');
+                    return const Scaffold(
+                      body: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
 
-            if (state is Authenticated) {
-              // User is authenticated, show main navigation page
-              print('App: User authenticated, showing MainNavigationPage');
-              return const MainNavigationPage();
-            }
+                  if (state is Authenticated) {
+                    // User is authenticated, show main navigation page
+                    print(
+                        'App: User authenticated, showing MainNavigationPage');
+                    return const MainNavigationPage();
+                  }
 
-            // User is not authenticated, show splash screen first
-            print('App: User not authenticated, showing SplashScreen');
-            return const SplashScreen();
+                  // User is not authenticated, show splash screen first
+                  print('App: User not authenticated, showing SplashScreen');
+                  return const SplashScreen();
+                },
+              ),
+            );
           },
         ),
       ),

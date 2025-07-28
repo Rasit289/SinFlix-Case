@@ -4,6 +4,7 @@ import '../../../../../presentation/features/profile/presentation/views/profile_
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_strings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const ProfilePage(),
+    ProfilePage(),
   ];
 
   @override
@@ -52,14 +53,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                     children: [
                       _buildTabButton(
                         icon: Icons.home_filled,
-                        label: AppStrings.homeTab,
+                        label: AppLocalizations.of(context)!.homeTab,
                         isSelected: _currentIndex == 0,
                         onTap: () => setState(() => _currentIndex = 0),
                       ),
                       SizedBox(width: AppSizes.paddingL),
                       _buildTabButton(
                         icon: Icons.person,
-                        label: AppStrings.profileTab,
+                        label: AppLocalizations.of(context)!.profileTab,
                         isSelected: _currentIndex == 1,
                         onTap: () => setState(() => _currentIndex = 1),
                       ),

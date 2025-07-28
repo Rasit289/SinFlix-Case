@@ -2,10 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../../domain/usecases/upload_photo_usecase.dart';
+import '../../../../../core/mixins/logger_mixin.dart';
 import 'photo_upload_event.dart';
 import 'photo_upload_state.dart';
 
-class PhotoUploadBloc extends Bloc<PhotoUploadEvent, PhotoUploadState> {
+class PhotoUploadBloc extends Bloc<PhotoUploadEvent, PhotoUploadState>
+    with LoggerMixin {
   final ImagePicker _picker = ImagePicker();
   final UploadPhotoUseCase _uploadPhotoUseCase;
 

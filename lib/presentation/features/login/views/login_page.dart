@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../app.dart' show LocaleProvider;
 import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -31,6 +33,68 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: context.background,
       resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: const SizedBox.shrink(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            tooltip: 'Dil / Language',
+            onPressed: () async {
+              final provider = context.read<LocaleProvider>();
+              final currentLocale = provider.locale.languageCode;
+              final selected = await showModalBottomSheet<Locale>(
+                context: context,
+                backgroundColor: Colors.black,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                ),
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[700],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Dil Seç / Select Language',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildLangButton(
+                              context, 'tr', 'Türkçe', currentLocale == 'tr'),
+                          _buildLangButton(
+                              context, 'en', 'English', currentLocale == 'en'),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              );
+              if (selected != null) {
+                provider.setLocale(selected);
+              }
+            },
+          ),
+        ],
+      ),
       body: BlocBuilder<LoginBloc, LoginState>(
         bloc: widget.viewModel.loginBloc,
         builder: (context, state) {
@@ -49,11 +113,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: AppSizes.paddingXXXL),
-
                   // Header Section
                   Text(
-                    AppStrings.loginTitle,
+                    AppLocalizations.of(context)!.loginTitle,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeXXL,
@@ -64,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: AppSizes.paddingM),
 
                   Text(
-                    AppStrings.loginSubtitle,
+                    AppLocalizations.of(context)!.loginSubtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: context.textSecondary,
@@ -81,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Email Field
                       CustomTextField(
                         controller: emailController,
-                        hintText: AppStrings.emailHint,
+                        hintText: AppLocalizations.of(context)!.emailHint,
                         prefixIcon: Icons.email,
                         onChanged: (value) {
                           if (state is LoginFailure) {
@@ -95,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                       // Password Field
                       CustomTextField(
                         controller: passwordController,
-                        hintText: AppStrings.passwordHint,
+                        hintText: AppLocalizations.of(context)!.passwordHint,
                         prefixIcon: Icons.lock,
                         obscureText: _obscurePassword,
                         suffixIcon: _obscurePassword
@@ -121,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: TextButton(
                           onPressed: () {},
                           child: Text(
-                            AppStrings.forgotPassword,
+                            AppLocalizations.of(context)!.forgotPassword,
                             style: TextStyle(
                               color: context.primary,
                               fontSize: AppSizes.fontSizeS,
@@ -134,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Login Button
                       CustomButton(
-                        text: AppStrings.loginButton,
+                        text: AppLocalizations.of(context)!.loginButton,
                         onPressed: () {
                           widget.viewModel.login(
                               emailController.text, passwordController.text);
@@ -174,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            AppStrings.noAccount,
+                            AppLocalizations.of(context)!.noAccount,
                             style: TextStyle(color: context.textSecondary),
                           ),
                           GestureDetector(
@@ -182,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.of(context).pushNamed('/signup');
                             },
                             child: Text(
-                              AppStrings.signUpNow,
+                              AppLocalizations.of(context)!.signUpNow,
                               style: TextStyle(
                                 color: context.textPrimary,
                                 decoration: TextDecoration.underline,
@@ -239,6 +301,45 @@ class _LoginPageState extends State<LoginPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _buildLangButton(
+      BuildContext context, String code, String label, bool selected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context, Locale(code)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: selected ? Colors.red : Colors.grey[900],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? Colors.red : Colors.grey[700]!,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? Colors.white : Colors.grey[200],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              if (selected)
+                const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

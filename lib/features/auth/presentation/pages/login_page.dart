@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import '../viewmodels/auth_viewmodel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../app.dart' show LocaleProvider;
 
 class LoginPage extends StatefulWidget {
   final AuthViewModel viewModel;
@@ -22,203 +24,317 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocBuilder<AuthBloc, AuthState>(
-        bloc: widget.viewModel.authBloc,
-        builder: (context, state) {
-          if (state is AuthLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.red,
-              ),
-            );
-          }
+      body: Stack(
+        children: [
+          // Ana içerik
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 60),
 
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 60),
+                // Header Section
+                Text(
+                  AppLocalizations.of(context)!.loginTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  AppLocalizations.of(context)!.loginSubtitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 40),
 
-                  // Header Section
-                  const Text(
-                    'Merhabalar',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+                // Email Field
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1F1F1F),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade700),
+                  ),
+                  child: TextField(
+                    controller: emailController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.emailHint,
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      prefixIcon: const Icon(Icons.email, color: Colors.white),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Tempus varius a vitae interdum id tortor elementum tristique eleifend at.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
+                ),
+                const SizedBox(height: 16),
+
+                // Password Field
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1F1F1F),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade700),
+                  ),
+                  child: TextField(
+                    controller: passwordController,
+                    obscureText: _obscurePassword,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.passwordHint,
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.white),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                ),
+                const SizedBox(height: 16),
 
-                  // Email Field
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1F1F1F),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade700),
-                    ),
-                    child: TextField(
-                      controller: emailController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        hintText: 'E-Posta',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        prefixIcon: Icon(Icons.email, color: Colors.white),
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                // Forgot Password
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      // TODO: Implement forgot password
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.forgotPassword,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                ),
+                const SizedBox(height: 32),
 
-                  // Password Field
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1F1F1F),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade700),
+                // Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      widget.viewModel.login(
+                        emailController.text,
+                        passwordController.text,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: _obscurePassword,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: 'Şifre',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: Colors.white,
+                    child: Text(
+                      AppLocalizations.of(context)!.loginButton,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Sign Up Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.noAccount,
+                        style: const TextStyle(color: Colors.white70),
+                        children: [
+                          TextSpan(
+                            text: AppLocalizations.of(context)!.signUpNow,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
-                        ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Forgot Password
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      onPressed: () {
-                        // TODO: Implement forgot password
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                SignupPage(viewModel: widget.viewModel),
+                          ),
+                        );
                       },
-                      child: const Text(
-                        'Şifremi unuttum',
-                        style: TextStyle(
-                          color: Colors.white,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
+                      child: const SizedBox.shrink(),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                  ],
+                ),
+                const SizedBox(height: 32),
 
-                  // Login Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        widget.viewModel.login(
-                            emailController.text, passwordController.text);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Giriş Yap',
-                        style: TextStyle(
+                // User Agreement
+                Text.rich(
+                  TextSpan(
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                    children: [
+                      TextSpan(
+                          text: AppLocalizations.of(context)!.userAgreement),
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.userAgreementAccept,
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Social Login Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildSocialButton('G', () {}),
-                      _buildSocialButton('', () {}, icon: Icons.apple),
-                      _buildSocialButton('f', () {}),
+                      TextSpan(
+                          text: AppLocalizations.of(context)!
+                              .userAgreementContinue),
                     ],
                   ),
-                  const SizedBox(height: 40),
+                  textAlign: TextAlign.center,
+                ),
 
-                  // Signup Prompt
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Bir hesabın yok mu? ',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  SignupPage(viewModel: widget.viewModel),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Kayıt Ol!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold,
+                // Error Message
+                BlocBuilder<AuthBloc, AuthState>(
+                  bloc: widget.viewModel.authBloc,
+                  builder: (context, state) {
+                    if (state is AuthFailure) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+          ),
+          // Dil seçici buton - sağ üstte
+          Positioned(
+            top: 60,
+            right: 24,
+            child: IconButton(
+              icon: const Icon(Icons.language, color: Colors.white),
+              tooltip: 'Dil / Language',
+              onPressed: () async {
+                final provider = context.read<LocaleProvider>();
+                final currentLocale = provider.locale.languageCode;
+                final selected = await showModalBottomSheet<Locale>(
+                  context: context,
+                  backgroundColor: Colors.black,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[700],
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-
-                  // Error Message
-                  if (state is AuthFailure)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Text(
-                        state.message,
-                        style: const TextStyle(color: Colors.red),
-                        textAlign: TextAlign.center,
-                      ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Dil Seç / Select Language',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildLangButton(
+                                context, 'tr', 'Türkçe', currentLocale == 'tr'),
+                            _buildLangButton(context, 'en', 'English',
+                                currentLocale == 'en'),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ),
-                ],
-              ),
+                  ),
+                );
+                if (selected != null) {
+                  provider.setLocale(selected);
+                }
+              },
             ),
-          );
-        },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLangButton(
+      BuildContext context, String code, String label, bool selected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context, Locale(code)),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: selected ? Colors.red : Colors.grey[900],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? Colors.red : Colors.grey[700]!,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? Colors.white : Colors.grey[200],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              if (selected)
+                const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -399,94 +515,105 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    // User Agreement
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 4.0, right: 4.0, bottom: 8.0),
-                      child: RichText(
-                        text: TextSpan(
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 13),
-                          children: [
-                            const TextSpan(text: 'Kullanıcı sözleşmesini '),
-                            TextSpan(
-                              text: 'okudum ve kabul ediyorum.',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              // onEnter: (event) {},
-                            ),
-                            const TextSpan(
-                                text:
-                                    ' Bu sözleşmeyi okuyarak devam ediniz lütfen.'),
-                          ],
+                    const SizedBox(height: 24),
+                    // Agreement Checkbox
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _agreementChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              _agreementChecked = value ?? false;
+                            });
+                          },
+                          fillColor:
+                              MaterialStateProperty.resolveWith((states) {
+                            if (states.contains(MaterialState.selected)) {
+                              return Colors.red;
+                            }
+                            return Colors.grey.shade700;
+                          }),
                         ),
-                      ),
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 13),
+                              children: [
+                                const TextSpan(text: 'Kullanıcı sözleşmesini '),
+                                const TextSpan(
+                                  text: 'okudum ve kabul ediyorum.',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const TextSpan(
+                                    text:
+                                        ' Bu sözleşmeyi okuyarak devam ediniz lütfen.'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    // Signup Button
+                    const SizedBox(height: 32),
+                    // Sign Up Button
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // Şifreler eşleşiyor mu kontrolü
-                          if (passwordController.text !=
-                              passwordRepeatController.text) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Şifreler eşleşmiyor!')),
-                            );
-                            return;
-                          }
-                          widget.viewModel.signup(nameController.text,
-                              emailController.text, passwordController.text);
-                        },
+                        onPressed: _agreementChecked
+                            ? () {
+                                if (passwordController.text !=
+                                    passwordRepeatController.text) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .passwordsDoNotMatch)),
+                                  );
+                                  return;
+                                }
+                                widget.viewModel.signup(
+                                  nameController.text,
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                              }
+                            : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Şimdi Kaydol',
-                          style: TextStyle(
-                            color: Colors.white,
+                        child: Text(
+                          AppLocalizations.of(context)!.signUpNow,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    // Social Login Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildSocialButton('G', () {}),
-                        _buildSocialButton('', () {}, icon: Icons.apple),
-                        _buildSocialButton('f', () {}),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                    // Login Prompt
+                    const SizedBox(height: 24),
+                    // Sign In Link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Zaten bir hesabın var mı? ',
-                          style: TextStyle(color: Colors.white70),
+                        Text(
+                          AppLocalizations.of(context)!.alreadyHaveAccount,
+                          style: const TextStyle(color: Colors.white70),
                         ),
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text(
-                            'Giriş Yap!',
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.signInNow,
+                            style: const TextStyle(
                               color: Colors.white,
                               decoration: TextDecoration.underline,
                               fontWeight: FontWeight.bold,
