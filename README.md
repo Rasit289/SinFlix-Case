@@ -85,7 +85,7 @@ Modern Flutter teknolojileri ile geliştirilmiş, Clean Architecture prensipleri
 - ✅ **Error States**: Hata durumları
 - ✅ **Empty States**: Boş durum tasarımları
 
-### 5. Firebase Crashlytics & Analytics
+### 6. Firebase Crashlytics & Analytics
 ✅ Crashlytics: Uygulama çökme raporlarının otomatik toplanması ve analizi
 ✅ Analytics: Kullanıcı davranışları ve uygulama performansının detaylı takibi
 ✅ Real-time Monitoring: Gerçek zamanlı hata ve performans izleme
