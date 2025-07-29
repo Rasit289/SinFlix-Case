@@ -31,20 +31,7 @@ Modern Flutter teknolojileri ile geliştirilmiş, Clean Architecture prensipleri
 ## 🏗️ Mimari Yapı
 
 ### Clean Architecture
-```
-lib/
-├── presentation/     # UI Katmanı
-│   ├── features/    # Özellik bazlı sayfalar
-│   └── shared/      # Ortak widget'lar
-├── domain/          # İş Mantığı Katmanı
-│   ├── entities/    # Varlık sınıfları
-│   ├── repositories/# Repository arayüzleri
-│   └── usecases/    # İş mantığı use case'leri
-└── data/            # Veri Katmanı
-    ├── datasources/ # Veri kaynakları
-    ├── models/      # Veri modelleri
-    └── repositories/# Repository implementasyonları
-```
+
 
 ### State Management
 - ✅ **BLoC Pattern**: Merkezi state yönetimi
@@ -98,56 +85,27 @@ lib/
 - ✅ **Error States**: Hata durumları
 - ✅ **Empty States**: Boş durum tasarımları
 
-## 📱 Ekran Görüntüleri
+### 5. Firebase Crashlytics & Analytics
+✅ Crashlytics: Uygulama çökme raporlarının otomatik toplanması ve analizi
+✅ Analytics: Kullanıcı davranışları ve uygulama performansının detaylı takibi
+✅ Real-time Monitoring: Gerçek zamanlı hata ve performans izleme
+✅ Custom Events: Özel olayların (favori ekleme, film görüntüleme vb.) takibi
+✅ User Journey Tracking: Kullanıcı yolculuğunun analizi ve optimizasyonu
+✅ Performance Metrics: Uygulama hızı ve bellek kullanımının izlenmesi
 
-- **Ana Sayfa**: Film grid görünümü ve favori sistemi
-- **Giriş/Kayıt**: Modern kimlik doğrulama ekranları
-- **Profil**: Kullanıcı profili ve fotoğraf yükleme
-- **Navigasyon**: Bottom tab bar ile sayfa geçişleri
+Entegrasyon Özellikleri
+-Otomatik Hata Yakalama: Try-catch blokları ile yakalanan hataların Firebase'e gönderilmesi
+-Custom Error Reporting: Özel hata mesajları ve stack trace'lerin loglanması
+-User Properties: Kullanıcı özelliklerinin (dil, tema, cihaz bilgisi) analitik verilerine dahil edilmesi
+-Screen Tracking: Sayfa geçişlerinin ve kullanıcı etkileşimlerinin otomatik takibi
+-Conversion Tracking: Önemli aksiyonların (giriş, favori ekleme) dönüşüm oranlarının izlenmesi
 
-## 🚀 Kurulum ve Çalıştırma
+Geliştirici Avantajları
+-Proactive Bug Detection: Çökme raporları ile proaktif hata tespiti
+-User Experience Insights: Kullanıcı davranış analizi ile UX iyileştirmeleri
+-Performance Optimization: Performans metrikleri ile optimizasyon fırsatları
+-Data-Driven Decisions: Veri odaklı geliştirme kararları
 
-### Gereksinimler
-- Flutter SDK 3.0.0 veya üzeri
-- Dart 2.17.0 veya üzeri
-- Android Studio / VS Code
-- Git
-
-### Kurulum Adımları
-
-1. **Repository'yi klonlayın:**
-```bash
-git clone https://github.com/Rasit289/SinFlix-Case.git
-cd SinFlix-Case
-```
-
-2. **Bağımlılıkları yükleyin:**
-```bash
-flutter pub get
-```
-
-3. **Uygulamayı çalıştırın:**
-```bash
-flutter run
-```
-
-### Platform Desteği
-- ✅ **Android**: API Level 21+
-- ✅ **iOS**: iOS 11.0+
-- ✅ **Web**: Modern tarayıcılar
-
-## 🔧 Konfigürasyon
-
-### API Ayarları
-Uygulamayı çalıştırmadan önce API endpoint'lerini yapılandırın:
-```dart
-// lib/data/datasources/ dosyalarında API URL'lerini güncelleyin
-```
-
-### Environment Variables
-Gerekli environment değişkenlerini ayarlayın:
-- API Base URL
-- API Keys (gerekirse)
 
 ## 📊 Performans Özellikleri
 
@@ -178,20 +136,12 @@ Gerekli environment değişkenlerini ayarlayın:
 - State management best practices
 - Error handling best practices
 
-## 📄 Lisans
 
-Bu proje NodeLabs case study olarak geliştirilmiştir.
 
 ## 👨‍💻 Geliştirici
 
+**Raşit Karabıyık
+
 **Rasit289** - [GitHub Profili](https://github.com/Rasit289)
 
----
 
-<div align="center">
-
-**SinFlix** ile film dünyasını keşfedin! 🎬✨
-
-*Flutter ile ❤️ ile geliştirildi*
-
-</div>
