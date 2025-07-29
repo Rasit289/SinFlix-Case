@@ -7,6 +7,7 @@ class AppTheme {
       brightness: Brightness.dark,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
+      fontFamily: 'EuclidCircularA', // Ana font olarak Euclid Circular A
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primary,
         secondary: AppColors.primaryDark,
@@ -20,9 +21,81 @@ class AppTheme {
         onError: AppColors.textPrimary,
       ),
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: AppColors.textPrimary),
-        bodyMedium: TextStyle(color: AppColors.textPrimary),
-        bodySmall: TextStyle(color: AppColors.textSecondary),
+        displayLarge: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        displaySmall: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        headlineLarge: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        titleLarge: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        titleMedium: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        titleSmall: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        bodyLarge: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        bodySmall: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w300,
+          color: AppColors.textSecondary,
+        ),
+        labelLarge: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        labelMedium: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w400,
+          color: AppColors.textPrimary,
+        ),
+        labelSmall: TextStyle(
+          fontFamily: 'EuclidCircularA',
+          fontWeight: FontWeight.w400,
+          color: AppColors.textSecondary,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

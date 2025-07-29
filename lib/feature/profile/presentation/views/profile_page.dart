@@ -449,19 +449,19 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _BonusIconText(
-                          icon: Icons.diamond,
+                          imagePath: 'assets/images/premium.png',
                           label: AppLocalizations.of(context)!.premiumAccount,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
+                          imagePath: 'assets/images/more_match.png',
                           label: AppLocalizations.of(context)!.moreMatches,
-                          doubleHeart: true,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
-                          icon: Icons.arrow_upward,
+                          imagePath: 'assets/images/highlight.png',
                           label: AppLocalizations.of(context)!.promote,
                           bgColor: Color(0xFFD32F2F)),
                       _BonusIconText(
-                          icon: Icons.favorite,
+                          imagePath: 'assets/images/more_like.png',
                           label: AppLocalizations.of(context)!.moreLikes,
                           bgColor: Color(0xFFD32F2F)),
                     ],
@@ -483,7 +483,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _JetonCard(
-                  color: const Color(0xFFD32F2F),
+                  color: const Color(0xFFB71C1C), // Daha koyu kırmızı
                   badge: AppLocalizations.of(context)!.bonus10,
                   old: '200',
                   current: '330',
@@ -491,7 +491,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                   badgeType: JetonBadgeType.grayRed,
                 ),
                 _JetonCard(
-                  color: const Color(0xFF7B1FA2),
+                  color: const Color(0xFF7B1FA2), // Mor
                   badge: AppLocalizations.of(context)!.bonus70,
                   old: '2.000',
                   current: '3.375',
@@ -500,7 +500,7 @@ class LimitedOfferBottomSheet extends StatelessWidget {
                   badgeType: JetonBadgeType.bluePurple,
                 ),
                 _JetonCard(
-                  color: const Color(0xFFD32F2F),
+                  color: const Color(0xFFB71C1C), // Daha koyu kırmızı
                   badge: AppLocalizations.of(context)!.bonus35,
                   old: '1.000',
                   current: '1.350',
@@ -543,54 +543,95 @@ class _BonusIconText extends StatelessWidget {
   final String label;
   final bool doubleHeart;
   final Color? bgColor;
+  final String? imagePath;
   const _BonusIconText(
       {this.icon,
       this.custom,
       required this.label,
       this.doubleHeart = false,
-      this.bgColor});
+      this.bgColor,
+      this.imagePath});
   @override
   Widget build(BuildContext context) {
     Widget iconWidget;
-    if (doubleHeart) {
-      iconWidget = Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            backgroundColor: bgColor ?? Colors.white.withOpacity(0.15),
-            radius: 24,
-            child: Icon(Icons.favorite, color: Colors.white, size: 28),
+    if (imagePath != null) {
+      // Resim kullanımı - limited_offer_background.png arka plan ile
+      iconWidget = Container(
+        width: 48,
+        height: 48,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: AssetImage('assets/images/limited_offer_background.png'),
+            fit: BoxFit.cover,
           ),
-          Positioned(
-            right: 8,
-            bottom: 8,
-            child: CircleAvatar(
-              backgroundColor:
-                  bgColor?.withOpacity(0.7) ?? Colors.white.withOpacity(0.18),
-              radius: 12,
-              child: Icon(Icons.favorite,
-                  color: Colors.white.withOpacity(0.7), size: 16),
+        ),
+        child: Image.asset(
+          imagePath!,
+          width: 48,
+          height: 48,
+        ),
+      );
+    } else if (doubleHeart) {
+      iconWidget = Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF8B0000),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFD32F2F).withOpacity(0.4),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 3),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: const Icon(
+          Icons.favorite,
+          color: Colors.white,
+          size: 28,
+        ),
       );
     } else if (custom != null) {
       iconWidget = custom!;
     } else {
-      iconWidget = CircleAvatar(
-        backgroundColor: bgColor ?? Colors.white.withOpacity(0.15),
-        radius: 24,
-        child: Icon(icon, color: Colors.white, size: 28),
+      iconWidget = Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF8B0000),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFD32F2F).withOpacity(0.4),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 28,
+        ),
       );
     }
     return Column(
       children: [
         iconWidget,
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
           textAlign: TextAlign.center,
+          maxLines: 2,
         ),
       ],
     );
@@ -627,8 +668,14 @@ class _JetonCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 colors: highlight
-                    ? [const Color(0xFF7B1FA2), const Color(0xFF512DA8)]
-                    : [color, color.withOpacity(0.85)],
+                    ? [
+                        const Color(0xFF5949E6), // Mavi (#5949E6)
+                        const Color(0xFFE50914), // Kırmızı (#E50914)
+                      ]
+                    : [
+                        color, // Kırmızı
+                        color.withOpacity(0.7), // Daha koyu kırmızı
+                      ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -674,6 +721,7 @@ class _JetonCard extends StatelessWidget {
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
+                    fontFamily: 'Montserrat',
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -711,11 +759,7 @@ class _JetonBadge extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7B1FA2), Color(0xFFD32F2F)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
+          color: const Color(0xFF5949E6), // Mavi badge (#5949E6)
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white, width: 2),
           boxShadow: [
@@ -739,7 +783,7 @@ class _JetonBadge extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: const Color(0xFFD32F2F),
+          color: const Color(0xFFB71C1C), // Daha koyu kırmızı badge
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white, width: 2),
           boxShadow: [
