@@ -17,7 +17,7 @@ class FirebaseService {
       _crashlytics = FirebaseCrashlytics.instance;
 
       // Enable Crashlytics in debug mode for testing
-      await _crashlytics?.setCrashlyticsCollectionEnabled(!kDebugMode);
+      await _crashlytics?.setCrashlyticsCollectionEnabled(true);
 
       // Set user identifier for Crashlytics
       await _crashlytics
@@ -203,6 +203,20 @@ class FirebaseService {
       print('Share event logged: $contentType - $itemId');
     } catch (e) {
       print('Failed to log share event: $e');
+    }
+  }
+
+  /// Test Crashlytics with a sample error
+  static Future<void> testCrashlytics() async {
+    try {
+      await _crashlytics?.recordError(
+        'Test error from Sinflix app',
+        StackTrace.current,
+        reason: 'Testing Crashlytics integration',
+      );
+      print('Test error logged to Crashlytics');
+    } catch (e) {
+      print('Failed to log test error: $e');
     }
   }
 }
