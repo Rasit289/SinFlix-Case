@@ -81,12 +81,12 @@ class _HomePageState extends State<HomePage> with LoggerMixin {
     required bool added,
     required String movieTitle,
   }) {
+    final loc = AppLocalizations.of(context)!;
     final color = added ? Colors.green[600] : Colors.red[600];
     final icon = added ? Icons.favorite : Icons.favorite_border;
     final iconColor = added ? Colors.red : Colors.white;
-    final text = added
-        ? '$movieTitle favorilere eklendi'
-        : '$movieTitle favorilerden çıkarıldı';
+    final text =
+        added ? loc.favoriteAdded(movieTitle) : loc.favoriteRemoved(movieTitle);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

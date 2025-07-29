@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../theme/app_theme.dart';
@@ -17,6 +18,7 @@ class TermsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       decoration: BoxDecoration(
@@ -48,7 +50,7 @@ class TermsBottomSheet extends StatelessWidget {
                 const SizedBox(width: AppSizes.paddingM),
                 Expanded(
                   child: Text(
-                    'Kullanıcı Sözleşmesi',
+                    loc.termsTitle,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeL,
@@ -85,7 +87,7 @@ class TermsBottomSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSizes.radiusS),
                     ),
                     child: Text(
-                      'Son Güncelleme: 26 Temmuz 2025',
+                      loc.termsLastUpdate,
                       style: TextStyle(
                         color: context.primary,
                         fontSize: AppSizes.fontSizeS,
@@ -93,12 +95,10 @@ class TermsBottomSheet extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingL),
-
                   // Terms Content
                   Text(
-                    '1. Hizmet Kullanımı',
+                    loc.termsSection1Title,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeM,
@@ -107,18 +107,16 @@ class TermsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingS),
                   Text(
-                    'Bu uygulamayı kullanarak, aşağıdaki şartları kabul etmiş sayılırsınız. Uygulamamız, kullanıcılarımıza en iyi deneyimi sunmak için sürekli olarak geliştirilmektedir.',
+                    loc.termsSection1Body,
                     style: TextStyle(
                       color: context.textSecondary,
                       fontSize: AppSizes.fontSizeS,
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingL),
-
                   Text(
-                    '2. Kullanıcı Sorumlulukları',
+                    loc.termsSection2Title,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeM,
@@ -127,18 +125,16 @@ class TermsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingS),
                   Text(
-                    '• Hesap bilgilerinizi güvenli tutmak sizin sorumluluğunuzdadır.\n• Uygulamayı yasal amaçlar için kullanmalısınız.\n• Diğer kullanıcıların haklarına saygı göstermelisiniz.\n• Spam veya zararlı içerik paylaşmamalısınız.',
+                    loc.termsSection2Body,
                     style: TextStyle(
                       color: context.textSecondary,
                       fontSize: AppSizes.fontSizeS,
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingL),
-
                   Text(
-                    '3. Gizlilik Politikası',
+                    loc.termsSection3Title,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeM,
@@ -147,18 +143,16 @@ class TermsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingS),
                   Text(
-                    'Kişisel verileriniz, gizlilik politikamız kapsamında korunmaktadır. Verileriniz sadece hizmet kalitesini artırmak ve güvenliği sağlamak amacıyla kullanılmaktadır.',
+                    loc.termsSection3Body,
                     style: TextStyle(
                       color: context.textSecondary,
                       fontSize: AppSizes.fontSizeS,
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingL),
-
                   Text(
-                    '4. Hizmet Değişiklikleri',
+                    loc.termsSection4Title,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeM,
@@ -167,18 +161,16 @@ class TermsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingS),
                   Text(
-                    'Hizmetlerimizi geliştirmek için zaman zaman değişiklikler yapabiliriz. Bu değişiklikler önceden duyurulacak ve kullanıcılarımız bilgilendirilecektir.',
+                    loc.termsSection4Body,
                     style: TextStyle(
                       color: context.textSecondary,
                       fontSize: AppSizes.fontSizeS,
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingL),
-
                   Text(
-                    '5. İletişim',
+                    loc.termsSection5Title,
                     style: TextStyle(
                       color: context.textPrimary,
                       fontSize: AppSizes.fontSizeM,
@@ -187,14 +179,13 @@ class TermsBottomSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSizes.paddingS),
                   Text(
-                    'Sorularınız veya önerileriniz için bizimle iletişime geçebilirsiniz:\n\nEmail: support@sinflix.com\nTelefon: +90 212 XXX XX XX',
+                    loc.termsSection5Body,
                     style: TextStyle(
                       color: context.textSecondary,
                       fontSize: AppSizes.fontSizeS,
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: AppSizes.paddingXXL),
                 ],
               ),

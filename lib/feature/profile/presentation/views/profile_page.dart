@@ -15,6 +15,7 @@ import '../../../../../data/datasources/profile_remote_datasource.dart';
 import '../../../../../core/services/token_storage_service.dart';
 import '../../../../../../app.dart' show LocaleProvider;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sinflix/feature/home/presentation/views/main_navigation_page.dart';
 
 class ProfilePage extends StatelessWidget with LoggerMixin {
   ProfilePage({Key? key}) : super(key: key);
@@ -41,9 +42,12 @@ class ProfilePage extends StatelessWidget with LoggerMixin {
             child: GestureDetector(
               onTap: () {
                 logUserAction('back_button_pressed',
-                    {'from': 'profile_page', 'to': 'home_page'});
-                logNavigation('profile_page', 'home_page');
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                    {'from': 'profile_page', 'to': 'main_navigation_page'});
+                logNavigation('profile_page', 'main_navigation_page');
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const MainNavigationPage()),
+                  (route) => false,
+                );
               },
               child: Container(
                 width: 40,
