@@ -42,9 +42,8 @@ dependencies:
   shared_preferences: ^2.2.2
   image_picker: ^1.0.7
   logger: ^2.0.2+1
-  firebase_core: ^2.15.1
-  firebase_analytics: ^10.4.5
-  firebase_crashlytics: ^3.3.5
+  lottie: ^2.7.0
+
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +88,7 @@ flutter:
   generate: true
   assets:
     - assets/images/
+    - assets/animations/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

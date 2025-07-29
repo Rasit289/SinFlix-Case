@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../presentation/features/login/views/login_page.dart';
-import '../presentation/features/login/blocs/login_bloc.dart';
-import '../presentation/features/login/viewmodels/login_viewmodel.dart';
-import '../presentation/features/signup/views/signup_page.dart';
-import '../presentation/features/signup/blocs/signup_bloc.dart';
-import '../presentation/features/signup/viewmodels/signup_viewmodel.dart';
-import '../presentation/shared/widgets/splash_screen.dart';
+import '../feature/login/views/login_page.dart';
+import '../feature/login/blocs/login_bloc.dart';
+import '../feature/login/viewmodels/login_viewmodel.dart';
+import '../feature/signup/views/signup_page.dart';
+import '../feature/signup/blocs/signup_bloc.dart';
+import '../feature/signup/viewmodels/signup_viewmodel.dart';
+import '../shared/widgets/splash_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {

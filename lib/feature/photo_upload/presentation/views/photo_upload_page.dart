@@ -8,7 +8,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/mixins/logger_mixin.dart';
-import '../../../../../core/services/firebase_service.dart';
+
 import '../../../../../domain/usecases/upload_photo_usecase.dart';
 import '../../../../../data/repositories/photo_upload_repository_impl.dart';
 import '../../../../../data/datasources/photo_upload_remote_datasource.dart';

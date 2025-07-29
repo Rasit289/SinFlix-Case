@@ -9,7 +9,7 @@ import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/utils/image_utils.dart';
 import '../../../../../core/mixins/logger_mixin.dart';
-import '../../../../../core/services/firebase_service.dart';
+
 import 'package:dio/dio.dart';
 import '../../../../../data/datasources/profile_remote_datasource.dart';
 import '../../../../../core/services/token_storage_service.dart';

@@ -4,19 +4,19 @@ import 'package:dio/dio.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'core/services/firebase_service.dart';
-import 'presentation/shared/theme/app_theme.dart';
+
+import 'shared/theme/app_theme.dart';
 import 'routes/app_router.dart';
-import 'presentation/features/login/views/login_page.dart';
-import 'presentation/features/login/blocs/login_bloc.dart';
-import 'presentation/features/login/viewmodels/login_viewmodel.dart';
-import 'presentation/features/signup/views/signup_page.dart';
-import 'presentation/features/signup/blocs/signup_bloc.dart';
-import 'presentation/features/signup/viewmodels/signup_viewmodel.dart';
-import 'presentation/shared/blocs/auth_bloc.dart';
-import 'presentation/shared/widgets/splash_screen.dart';
-import 'presentation/features/home/presentation/views/main_navigation_page.dart';
-import 'presentation/features/home/presentation/bloc/home_bloc.dart';
+import 'feature/login/views/login_page.dart';
+import 'feature/login/blocs/login_bloc.dart';
+import 'feature/login/viewmodels/login_viewmodel.dart';
+import 'feature/signup/views/signup_page.dart';
+import 'feature/signup/blocs/signup_bloc.dart';
+import 'feature/signup/viewmodels/signup_viewmodel.dart';
+import 'shared/blocs/auth_bloc.dart';
+import 'shared/widgets/splash_screen.dart';
+import 'feature/home/presentation/views/main_navigation_page.dart';
+import 'feature/home/presentation/bloc/home_bloc.dart';
 import 'domain/usecases/login_usecase.dart';
 import 'domain/usecases/signup_usecase.dart';
 import 'domain/usecases/test_api_connection_usecase.dart';
@@ -46,8 +46,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize Firebase
-    FirebaseService.initialize();
     // Initialize services
     final tokenStorage = TokenStorageServiceImpl();
     final dio = Dio();
